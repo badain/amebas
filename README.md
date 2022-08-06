@@ -15,16 +15,27 @@ Current methods to evaluate the spatial-temporal dynamics of fluorescent reporte
 Here we introduce a novel computational pipeline to automate and quantify the spatiotemporal behavior of single cells using a model of cell polarity: pollen tube growth and cytosolic ion dynamics. A three-step algorithm was developed to process ratiometric images and extract a quantitative representation of intracellular dynamics and growth. The first step segments the cell from the background, producing a binary mask by a thresholding technique in the pixel intensity space. The second step traces a path through the midline of the cell through skeletonization. Finally, the third step provides the processed data as a ratiometric timelapse and yields a ratiometric kymograph (i.e. 1D spatial profile through time). Data from ratiometric images acquired with genetically encoded fluorescent reporters from growing pollen tubes were used to benchmark the method. This pipeline allows faster, less biased and more accurate representation of the spatiotemporal dynamics along the midline of polarized cells, thus, advancing the quantitative toolkit available to investigate cell polarity.
 
 ## Using AMEBaS
- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/badain/amebas/blob/main/AMEBAS_Colab.ipynb)
+AMEBaS can be used as a Colab code or as a command line program
 
-usage: pipeline.py [-h] [--s [S]] [--f [F]] [--e [E]] [--n [N]] [--v] [--r] [--sm] [--b] [--k [K]] filename
+### Colab
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/badain/amebas/blob/main/AMEBAS_Colab.ipynb)
 
-AMEBaS: Automatic Midline Extraction and Background Subtraction
+AMEBaS Colab features a pre-processed sample data timelapse
+
+
+### Command Line
+usage:
+```
+pipeline.py [-h] [--s [S]] [--f [F]] [--e [E]] [--n [N]] [--v] [--r] [--sm] [--b] [--k [K]] filename
+```
 
 positional arguments:
+```
   filename              dv or tiff filename
+```
 
 optional arguments:
+```
   -h, --help            show this help message and exit
   --s [S], --sigma [S]  sigma used in pre-processing steps for thresholding
   --f [F], --interpolation_fraction [F]
@@ -40,3 +51,4 @@ optional arguments:
                         export background in ratiometric output. if false, replaces background with zeros.
   --k [K], --kymograph_kernel [K]
                         size of the kernel used in the kymograph gaussian filtering
+```
