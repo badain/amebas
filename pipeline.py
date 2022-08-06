@@ -21,8 +21,8 @@ if __name__ == "__main__":
     print(f'[timestamp] {ts}')
 
     # Argument Parsing
-    parser = argparse.ArgumentParser(description='reads and visualizes deltavision images')
-    parser.add_argument('filename', type=str, metavar='filename', help='dv filename')
+    parser = argparse.ArgumentParser(description='AMEBaS: Automatic Midline Extraction and Background Subtraction')
+    parser.add_argument('filename', type=str, metavar='filename', help='dv or tiff filename')
     parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='sigma used in pre-processing steps for thresholding')
     parser.add_argument("--f", "--interpolation_fraction", type=int, nargs="?", default=.25, help='fraction of the skeleton used for interpolation') # min 3
     parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='length of the extrapolated skeleton') # min para a tip
