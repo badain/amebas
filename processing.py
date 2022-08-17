@@ -55,7 +55,7 @@ def isolate_largest_area(image):
 
     return image, largest_regions
 
-# Apply mask on image
+# Apply the mask on image
 def apply_mask(image, mask):
     foreground_image = image.copy() # foreground only
     background_image = image.copy() # background only
@@ -81,7 +81,7 @@ def skeletonization(image):
 # Gets direction information from skeletons
 def get_growth_direction(first_skeleton_object, last_skeleton_object):
 
-    # get distance between end points: defines grow direction
+    # get the distance between endpoints: defines grow direction
     end_points_first = np.array(first_skeleton_object.coordinates[first_skeleton_object.degrees == 1].tolist())
     end_points_last = np.array(last_skeleton_object.coordinates[last_skeleton_object.degrees == 1].tolist())
 
@@ -95,7 +95,7 @@ def get_growth_direction(first_skeleton_object, last_skeleton_object):
         coordinates = coordinates[::-1] # reverse array
 
     # get vector angle: defines if growth is vertical or horizontal
-    delta = end_points_last[0] - end_points_last[-1] # vector given by the skeletons end points
+    delta = end_points_last[0] - end_points_last[-1] # vector given by the skeletons endpoints
     angle = np.arctan2(delta[0], delta[-1]) # angle of the vector [-π, π]
     angle = (np.degrees(angle) % 180) # angle in range [0, π]
 
@@ -109,7 +109,7 @@ def get_growth_direction(first_skeleton_object, last_skeleton_object):
 
     return angle, coordinates, growing_forward
 
-# Extrapolate Skeleton based on direction
+# Extrapolate Skeleton based on the direction
 def extrapolate(skeleton, interpolation_size, extension, angle, coordinates):
     x, y = coordinates.T # transpose, then unpack  [vertical, horizontal]
 
@@ -137,12 +137,12 @@ def extrapolate(skeleton, interpolation_size, extension, angle, coordinates):
     if(growing_forward):
         if(extension == -1): extension = (skeleton.shape[0] - skeleton_tip) - 1 # extends to edge [skeleton_tip -> image.shape]
         for i in range(skeleton_tip+1, skeleton_tip+extension): # extends [extension] pixels from skeleton tip in `forward` direction
-            if(int(f(i)) < extrapolation.shape[1]): extrapolation[i, int(f(i))] = 1 # CHECK IF THIS LINE SHOULD BE DEPENDENT ON ANGLE [i, f(i)] vs [i, f(i)] neste caso tem que ser sempre na direcao e sentido do crescimento. se esta crescendo no eixo yy  o input deve ser yy e o output xx. se cresce no xx, input xx output yy
+            if(int(f(i)) < extrapolation.shape[1]): extrapolation[i, int(f(i))] = 1
             else: break
     else:
         if(extension == -1): extension = skeleton_tip # extends to edge [0 -> skeleton_tip]
         for i in range(skeleton_tip-extension, skeleton_tip): # extends [extension] pixels from skeleton tip in 'backward' direction
-            if(int(f(i)) >= 0 and int(f(i)) < extrapolation.shape[1]): extrapolation[int(f(i)), i] = 1 # CHECK IF THIS LINE SHOULD BE DEPENDENT ON ANGLE [i, f(i)] vs [i, f(i)] neste caso tem que ser sempre na direcao e sentido do crescimento. se esta crescendo no eixo yy  o input deve ser yy e o output xx. se cresce no xx, input xx output yy
+            if(int(f(i)) >= 0 and int(f(i)) < extrapolation.shape[1]): extrapolation[int(f(i)), i] = 1
             else: break
 
     return extrapolation
