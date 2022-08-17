@@ -71,7 +71,7 @@ if __name__ == "__main__":
     gaussian_c_1 = filters.gaussian(median_c_1, sigma=args.s) # pre-processing step
     if(args.v): display(gaussian_c_1, 'filters', ts, '2_1', 'turbo')
     print('[2.2] isodata thresholding')
-    mask_c_1, thresh_c_1 = thresholding(gaussian_c_1, args.n, args.v)
+    mask_c_1, thresh_c_1 = thresholding(gaussian_c_1, args.n, args.v, '.', ts)
     if(args.v): display(mask_c_1, 'thresholding', ts, '2_2', 'gray')
 
     # isolating largest area
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     if(args.f > 0):
         if(args.f >= 1): interpolation_size = coordinates.shape[0] - 1
         else: interpolation_size = coordinates.shape[0] * args.f
-        extrapolation = extrapolate(skeleton, skeleton_object, int(interpolation_size), args.e, angle, coordinates)
+        extrapolation = extrapolate(skeleton, int(interpolation_size), args.e, angle, coordinates)
         extended_skeleton = Skeleton(np.logical_or(skeleton, extrapolation)) # extrapolation + skeleton
         if(args.v): display_single(np.logical_or(skeleton, extrapolation), 'extrapolate', ts, '3_2', 'gray')
     else:
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     # 5 RATIOMETRIC IMAGE
     print("[5] ratiometric results")
     if(hasTwoChannels):
-        ratio = ratiometric(median_c_0, median_c_1, signal_c_1, mask_c_1, thresh_c_1, args.sm, args.v, args.r)
+        ratio, masked_ratio = ratiometric(median_c_0, median_c_1, signal_c_1, mask_c_1, thresh_c_1, args.sm, args.v, args.r)
         if(args.b): io.imsave(f'{ts}_ratiometric.tiff', ratio)
         else: io.imsave(f'{ts}_ratiometric.tiff', masked_foreground(ratio, mask_c_1))
 
