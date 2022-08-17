@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='length of the extrapolated skeleton') # min para a tip
     parser.add_argument("--n", "--n_points", type=int, nargs="?", default=40, help='number of points used in loess smoothing of the background threshold values')
     parser.add_argument("--v", "--verbose", default=False, action='store_true', help='outputs every step in the pipeline')
-    parser.add_argument("--r", "--switch_ratio", default=False, action='store_true', help='switches channels used as numerator and denominator during ratio calculations') # opcao para canais codificados no nome do arquivo
+    parser.add_argument("--r", "--switch_ratio", default=False, action='store_true', help='switches channels used as numerator and denominator during ratio calculations')
     parser.add_argument("--sm", "--smooth_ratio", default=False, action='store_true', help='smooths ratiometric output')
     parser.add_argument("--b", "--background_ratio", default=True, action='store_true', help='export background in ratiometric output. if false, replaces background with zeros.')
     parser.add_argument("--k", "--kymograph_kernel", type=int, nargs="?", default=3, help='size of the kernel used in the kymograph gaussian filtering')
@@ -70,9 +70,9 @@ if __name__ == "__main__":
     median_c_1 = filters.median(c_1) # pre-processing step
     gaussian_c_1 = filters.gaussian(median_c_1, sigma=args.s) # pre-processing step
     if(args.v): display(gaussian_c_1, 'filters', ts, '2_1', 'turbo')
-    print('[2.2] isodata tresholding')
+    print('[2.2] isodata thresholding')
     mask_c_1, thresh_c_1 = thresholding(gaussian_c_1, args.n, args.v)
-    if(args.v): display(mask_c_1, 'tresholding', ts, '2_2', 'gray')
+    if(args.v): display(mask_c_1, 'thresholding', ts, '2_2', 'gray')
 
     # isolating largest area
     print('[2.3] isolating region with largest area')
