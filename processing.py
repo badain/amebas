@@ -14,7 +14,7 @@ from skimage.measure import label, regionprops
 from matplotlib import pyplot as plt
 
 # Thresholding
-def thresholding(image, n_points, verbose, workDir, ts):
+def thresholding(image, n_points, estimate, verbose, workDir, ts):
     threshold_values = []
     mask_image = np.zeros(image.shape) # binary image where foreground > thresh
 
@@ -22,20 +22,23 @@ def thresholding(image, n_points, verbose, workDir, ts):
         threshold_values.append(filters.threshold_isodata(image[frame,:,:])) # gets threshold value for each image
         mask_image[frame,:,:] = image[frame,:,:] > threshold_values[frame]
 
-    if(n_points > image.shape[0] or n_points < 3): n_points = 40 # exception handling
-    frac = n_points / len(threshold_values)
-    xout, smooth_threshold_values, wout = loess_1d(np.arange(len(threshold_values)), np.array(threshold_values), xnew=None, degree=1, frac=frac, npoints=None, rotate=False, sigy=None)
+    if(estimate):
+        if(n_points > image.shape[0] or n_points < 3): n_points = 40 # exception handling
+        frac = n_points / len(threshold_values)
+        xout, smooth_threshold_values, wout = loess_1d(np.arange(len(threshold_values)), np.array(threshold_values), xnew=None, degree=1, frac=frac, npoints=None, rotate=False, sigy=None)
 
-    if(verbose):
-        fig, ax = plt.subplots()
-        plt.title(f"LOESS smoothing frac={frac}")
-        plt.plot(np.arange(len(threshold_values)), smooth_threshold_values, color="#4d6edf")
-        plt.scatter(np.arange(len(threshold_values)), threshold_values, s=18, color='#31f199')
-        plt.savefig(f'{workDir}/out/{ts}_2_2_1_{"loess"}.png', dpi=300)
-        plt.show()
-        plt.close()
+        if(verbose):
+            fig, ax = plt.subplots()
+            plt.title(f"LOESS smoothing frac={frac}")
+            plt.plot(np.arange(len(threshold_values)), smooth_threshold_values, color="#4d6edf")
+            plt.scatter(np.arange(len(threshold_values)), threshold_values, s=18, color='#31f199')
+            plt.savefig(f'{workDir}/out/{ts}_2_2_1_{"loess"}.png', dpi=300)
+            plt.show()
+            plt.close()
 
-    return mask_image, smooth_threshold_values
+        return mask_image, smooth_threshold_values
+
+    return mask_image, threshold_values
 
 # Isolates Object with Largest Area
 def isolate_largest_area(image):
