@@ -73,6 +73,14 @@ def masked_foreground(image, mask):
     return image
 
 # Skeletonization
+def skeletonize_all_frames(image):
+    skeleton_timelapse = np.zeros(image.shape)
+
+    for frame in range(image.shape[0]):
+        skeleton_timelapse[frame,:,:] = skeletonize(image[frame,:,:], method='lee')
+
+    return skeleton_timelapse
+
 def skeletonization(image):
     skeleton = skeletonize(image, method='lee')
 

@@ -23,6 +23,7 @@ if __name__ == "__main__":
     # Argument Parsing
     parser = argparse.ArgumentParser(description='AMEBaS: Automatic Midline Extraction and Background Subtraction')
     parser.add_argument('filename', type=str, metavar='filename', help='dv or tiff filename')
+    parser.add_argument("--a", "--skeletonize_all_frames", default=False, action='store_true', help='traces midline in each frame of the timelapse. When False, skeletonizes only the last frame')
     parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='sigma used in pre-processing steps for thresholding')
     parser.add_argument("--f", "--interpolation_fraction", type=int, nargs="?", default=.25, help='fraction of the skeleton used for interpolation') # min 3
     parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='length of the extrapolated skeleton') # min para a tip
@@ -82,8 +83,14 @@ if __name__ == "__main__":
     # 3 SKELETONIZE
     last_frame = c_1.shape[0] - 1
     print("[3.1] skeletonization")
-    skeleton, skeleton_object = skeletonization(mask_c_1[last_frame,:,:])
-    first_skeleton, first_skeleton_object = skeletonization(mask_c_1[0,:,:])
+    if(args.a):
+        skeleton_timelapse = skeletonize_all_frames(mask_c_1)    # skeletonizes all frames
+        io.imsave(f'{ts}_skeletonized.tiff', skeleton_timelapse) # exports skeleton timelapse
+        skeleton, skeleton_object = skeleton_timelapse[last_frame], Skeleton(skeleton_timelapse[last_frame])
+        first_skeleton, first_skeleton_object = skeleton_timelapse[0], Skeleton(skeleton_timelapse[0])
+    else:
+        skeleton, skeleton_object = skeletonization(mask_c_1[last_frame,:,:])
+        first_skeleton, first_skeleton_object = skeletonization(mask_c_1[0,:,:])
     if(args.v): display_single(skeleton, 'skeletonize', ts, '3_1', 'gray')
     plt.imsave(f'{ts}_skeleton.png', skeleton, cmap=plt.cm.gray)
 
