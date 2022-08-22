@@ -185,7 +185,7 @@ def kymograph(image, coordinates, kernel_size, growing_forward):
     return kymograph
 
 # generates ratiometric images
-def ratiometric(channel_0, channel_1, signal_c_1, mask_c_1, thresh_c_1, smooth_ratio, verbose, switch_ratio):
+def ratiometric(channel_0, channel_1, signal_c_1, mask_c_1, thresh_c_1, smooth_ratio, reject_outliers, switch_ratio):
     ratio = np.zeros(channel_0.shape)
     masked_ratio = []
 
@@ -216,20 +216,21 @@ def ratiometric(channel_0, channel_1, signal_c_1, mask_c_1, thresh_c_1, smooth_r
         iqr = q75 - q25
         upper_whisker = q75 + (1.5 * iqr)
 
-        for y, x in zip(yy, xx):
-            # rejects upper outliers
-            if (ratio[frame, y, x] > upper_whisker):
-                # evaluates neighborhood median
-                median = []
-                for i in range(-1,2):
-                    for j in range(-1,2):
-                        if(y+i >= 0 and y+i < ratio[frame, :, :].shape[0] and x+j >= 0 and x+j < ratio[frame, :, :].shape[1]): # exception handling
-                            if(ratio[frame, y+i, x+j] != 'masked'): median.append(ratio[frame, y+i, x+j])
-                # checks neighborhood existence
-                if(len(median) == 0): ratio[frame, y, x] = upper_whisker # saturates
-                else:
-                    q50 = np.percentile(median, [50])
-                    ratio[frame, y, x] = q50 # replaces with median
+        if(reject_outliers):
+            for y, x in zip(yy, xx):
+                # rejects upper outliers
+                if (ratio[frame, y, x] > upper_whisker):
+                    # evaluates neighborhood median
+                    median = []
+                    for i in range(-1,2):
+                        for j in range(-1,2):
+                            if(y+i >= 0 and y+i < ratio[frame, :, :].shape[0] and x+j >= 0 and x+j < ratio[frame, :, :].shape[1]): # exception handling
+                                if(ratio[frame, y+i, x+j] != 'masked'): median.append(ratio[frame, y+i, x+j])
+                    # checks neighborhood existence
+                    if(len(median) == 0): ratio[frame, y, x] = upper_whisker # saturates
+                    else:
+                        q50 = np.percentile(median, [50])
+                        ratio[frame, y, x] = q50 # replaces with median
 
         if(smooth_ratio): masked_ratio.append(np.ma.array(filters.median(ratio[frame,:,:]), mask = 1-mask_c_1[frame, :, :]))
         else: masked_ratio.append(np.ma.array(ratio[frame,:,:], mask = 1-mask_c_1[frame, :, :]))
