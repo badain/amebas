@@ -38,6 +38,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # 1 FILE READING
+    workDir = "./"
     print('[1] file reading')
     if(".dv" in  args.filename):
         im = imread(args.filename)
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         c_1 = im[:,1,:,:]
     else:
         c_1 = im
-    if(args.v): display(c_1, 'input', ts, '1', 'turbo')
+    if(args.v): display(c_1, 'input', ts, '1', workDir, 'turbo')
 
     # 2 DETECTING THE MAIN CELL
     print('[2] main cell segmentation')
@@ -72,15 +73,15 @@ if __name__ == "__main__":
     if(hasTwoChannels): median_c_0 = filters.median(c_0) # pre-processing step
     median_c_1 = filters.median(c_1) # pre-processing step
     gaussian_c_1 = filters.gaussian(median_c_1, sigma=args.s) # pre-processing step
-    if(args.v): display(gaussian_c_1, 'filters', ts, '2_1', 'turbo')
+    if(args.v): display(gaussian_c_1, 'filters', ts, '2_1', workDir, 'turbo')
     print('[2.2] isodata thresholding')
     mask_c_1, thresh_c_1 = thresholding(gaussian_c_1, args.n, args.eb, args.v, '.', ts)
-    if(args.v): display(mask_c_1, 'thresholding', ts, '2_2', 'gray')
+    if(args.v): display(mask_c_1, 'thresholding', ts, '2_2', workDir, 'gray')
 
     # isolating largest area
     print('[2.3] isolating region with largest area')
     mask_c_1, signal_c_1 = isolate_largest_area(mask_c_1)
-    if(args.v): display(mask_c_1, 'isolation', ts, '2_3', 'gray')
+    if(args.v): display(mask_c_1, 'isolation', ts, '2_3', workDir, 'gray')
 
     # 3 SKELETONIZE
     last_frame = c_1.shape[0] - 1
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     else:
         skeleton, skeleton_object = skeletonization(mask_c_1[last_frame,:,:])
         first_skeleton, first_skeleton_object = skeletonization(mask_c_1[0,:,:])
-    if(args.v): display_single(skeleton, 'skeletonize', ts, '3_1', 'gray')
+    if(args.v): display_single(skeleton, 'skeletonize', ts, '3_1', workDir, 'gray')
     plt.imsave(f'{ts}_skeleton.png', skeleton, cmap=plt.cm.gray)
 
     print("[3.2] skeleton extrapolation")
@@ -103,7 +104,7 @@ if __name__ == "__main__":
         else: interpolation_size = coordinates.shape[0] * args.f
         extrapolation = extrapolate(skeleton, int(interpolation_size), args.e, angle, coordinates)
         extended_skeleton = Skeleton(np.logical_or(skeleton, extrapolation)) # extrapolation + skeleton
-        if(args.v): display_single(np.logical_or(skeleton, extrapolation), 'extrapolate', ts, '3_2', 'gray')
+        if(args.v): display_single(np.logical_or(skeleton, extrapolation), 'extrapolate', ts, '3_2', workDir, 'gray')
     else:
         extended_skeleton = skeleton_object
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     if(hasTwoChannels): kymograph_c_0 = kymograph(median_c_0, extended_skeleton.coordinates, args.k, growing_forward)
 
     # output
-    if(args.v): display_single(kymograph_c_1, 'kymograph', ts, '4', 'turbo')
+    if(args.v): display_single(kymograph_c_1, 'kymograph', ts, '4', workDir, 'turbo')
     plt.imsave(f'{ts}_kymograph_c_1.png', kymograph_c_1, cmap=plt.cm.turbo)
     np.savetxt(f"{ts}_kymograph_c_1.csv", kymograph_c_1, delimiter=",")
     if(hasTwoChannels):
