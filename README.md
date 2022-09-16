@@ -27,7 +27,7 @@ AMEBaS Colab features a pre-processed sample data timelapse
 ### Command Line
 usage:
 ```
-pipeline.py [-h] [--s [S]] [--f [F]] [--e [E]] [--n [N]] [--v] [--r] [--sm] [--b] [--k [K]] filename
+pipeline.py [-h] [--a] [--s [S]] [--f [F]] [--e [E]] [--n [N]] [--v] [--r] [--sm] [--eb] [--o] [--b] [--k [K]] filename
 ```
 
 positional arguments:
@@ -38,6 +38,8 @@ positional arguments:
 optional arguments:
 ```
   -h, --help            show this help message and exit
+  --a, --skeletonize_all_frames
+                        traces midline in each frame of the timelapse. When False, skeletonizes only the last frame
   --s [S], --sigma [S]  sigma used in pre-processing steps for thresholding
   --f [F], --interpolation_fraction [F]
                         fraction of the skeleton used for interpolation
@@ -48,6 +50,12 @@ optional arguments:
   --v, --verbose        outputs every step in the pipeline
   --r, --switch_ratio   switches channels used as numerator and denominator during ratio calculations
   --sm, --smooth_ratio  smooths ratiometric output
+  --eb, --estimate_bg_threshold_intensity
+                        estimates global background threshold intensity via polynomial regression of the frame-
+                        specific background threshold intensities
+  --o, --reject_outliers
+                        during the ratiometric evaluation, rejects pixels with abnormal intensities and replaces with
+                        the local average.
   --b, --background_ratio
                         export background in ratiometric output. if false, replaces background with zeros.
   --k [K], --kymograph_kernel [K]
