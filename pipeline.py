@@ -34,7 +34,7 @@ if __name__ == "__main__":
     parser.add_argument("--sm", "--smooth_ratio", default=False, action='store_true', help='smooths ratiometric output')
     parser.add_argument("--eb", "--estimate_bg_threshold_intensity", default=True, action='store_true', help='estimates global background threshold intensity via polynomial regression of the frame-specific background threshold intensities')
     parser.add_argument("--o", "--reject_outliers", default=False, action='store_true', help='during the ratiometric evaluation, rejects pixels with abnormal intensities and replaces with the local average.')
-    parser.add_argument("--b", "--background_ratio", default=False, action='store_true', help='export background in ratiometric output. if false, replaces background with zeros.')
+    parser.add_argument("--b", "--background_ratio", default=False, action='store_true', help='export background in ratiometric output. By default, replaces background with zeros.')
     parser.add_argument("--k", "--kymograph_kernel", type=int, nargs="?", default=3, help='size of the kernel used in the kymograph gaussian filtering')
     args = parser.parse_args()
 
