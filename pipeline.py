@@ -25,7 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('filename', type=str, metavar='filename', help='dv or tiff filename')
     parser.add_argument("--a", "--skeletonize_all_frames", default=False, action='store_true', help='traces midline in each frame of the timelapse. When False, skeletonizes only the last frame')
     parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='sigma used in pre-processing steps for thresholding')
-    parser.add_argument("--f", "--interpolation_fraction", type=int, nargs="?", default=.25, help='fraction of the skeleton used for interpolation')
+    parser.add_argument("--f", "--interpolation_fraction", type=float, nargs="?", default=.25, help='fraction of the skeleton used for interpolation')
     parser.add_argument("--sf", "--shift_fraction", type=float, nargs="?", default=.7, help='fraction of the color range that will be shifted to the background in the ratiometric kymograph colormap')
     parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='length of the extrapolated skeleton')
     parser.add_argument("--n", "--n_points", type=int, nargs="?", default=40, help='number of points used in loess smoothing of the background threshold values')
