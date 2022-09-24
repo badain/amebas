@@ -2,9 +2,27 @@
 # utilities
 import numpy as np
 # visualization
+import matplotlib as mpl
 from matplotlib import pyplot as plt
+from matplotlib.colors import ListedColormap
 
 # Visualization Functions
+# Colormap Generation
+# [0 -> bg_median] = black
+# 70% -> purple
+# 30% -> turbo
+def generate_cmap(shift_frac):
+    turbo = mpl.colormaps['turbo'].resampled(256)
+    highlight_frac = 1 - shift_frac
+    n_steps = 256
+
+    new_turbo = turbo(np.concatenate( (np.zeros(int(shift_frac * n_steps)) , np.linspace(0, 1, int(highlight_frac * n_steps)) ), axis=None) )
+    black = np.array([0, 0, 0, 1]) #RGBA
+    new_turbo[:1, :] = black
+    new_turbo = ListedColormap(new_turbo)
+
+    return new_turbo
+
 # Display Image Helper Function
 def display(image, title, ts, id, workDir, colorMap):
     fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)

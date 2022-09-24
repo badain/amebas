@@ -26,6 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("--a", "--skeletonize_all_frames", default=False, action='store_true', help='traces midline in each frame of the timelapse. When False, skeletonizes only the last frame')
     parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='sigma used in pre-processing steps for thresholding')
     parser.add_argument("--f", "--interpolation_fraction", type=int, nargs="?", default=.25, help='fraction of the skeleton used for interpolation')
+    parser.add_argument("--sf", "--shift_fraction", type=float, nargs="?", default=.7, help='fraction of the color range that will be shifted to the background in the ratiometric kymograph colormap')
     parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='length of the extrapolated skeleton')
     parser.add_argument("--n", "--n_points", type=int, nargs="?", default=40, help='number of points used in loess smoothing of the background threshold values')
     parser.add_argument("--v", "--verbose", default=False, action='store_true', help='outputs every step in the pipeline')
@@ -128,6 +129,7 @@ if __name__ == "__main__":
         if(args.b): io.imsave(f'{ts}_ratiometric.tiff', ratio)
         else: io.imsave(f'{ts}_ratiometric.tiff', masked_foreground(ratio, mask_c_1))
 
-        kymograph_ratio = kymograph(ratio, extended_skeleton.coordinates, args.k, growing_forward)
-        plt.imsave(f'{ts}_kymograph_ratio.png', kymograph_ratio, cmap=plt.cm.turbo)
+        kymograph_ratio = kymograph(masked_foreground(ratio, mask_c_1), skeleton_object.coordinates, args.k, growing_forward)
+        shifted_turbo_cmap = generate_cmap(args.sf)
+        plt.imsave(f'{ts}_kymograph_ratio.png', kymograph_ratio, cmap=shifted_turbo_cmap)
         np.savetxt(f"{ts}_kymograph_ratio.csv", kymograph_ratio, delimiter=",")
