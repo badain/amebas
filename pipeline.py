@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('filename', type=str, metavar='filename', help='Input timelapse filename. May be a .dv or a .tiff file.')
     parser.add_argument("--v", "--verbose", default=False, action='store_true', help='Outputs internal steps of the pipeline.')
     # [2] Single-Cell Segmentation
-    parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='Sigma used in the Gaussian Filter pre-processing step in preparation to the cell segmentation. Default is 2.')
+    parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='Sigma used in the Gaussian Filter preprocessing step in preparation to the cell segmentation. Default is 2.')
     # [3] Midline Tracing
     parser.add_argument("--a", "--complete_skeletonization", default=False, action='store_true', help='Traces the midline for each frame of the timelapse. By default, skeletonizes only the last frame.')
     parser.add_argument("--f", "--interpolation_fraction", type=float, nargs="?", default=.25, help='Fraction of the skeleton used for interpolation. Must be float contained in [0,1]. Default is 0.25.')
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # 2 DETECTING THE MAIN CELL
     print('[2] main cell segmentation')
-    print('[2.1] pre-processing filters')
+    print('[2.1] preprocessing filters')
     if(hasTwoChannels): median_c_0 = filters.median(c_0)
     median_c_1 = filters.median(c_1)
     gaussian_c_1 = filters.gaussian(median_c_1, sigma=args.s)
