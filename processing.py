@@ -14,7 +14,7 @@ from skimage.measure import label, regionprops
 from matplotlib import pyplot as plt
 
 # Thresholding
-def thresholding(image, n_points, estimate, verbose, workDir, ts):
+def thresholding(image, n_points, estimate, verbose, workDir, filename):
     threshold_values = []
     mask_image = np.zeros(image.shape) # binary image where foreground > thresh
 
@@ -32,7 +32,7 @@ def thresholding(image, n_points, estimate, verbose, workDir, ts):
             plt.title(f"LOESS smoothing frac={frac}")
             plt.plot(np.arange(len(threshold_values)), smooth_threshold_values, color="#4d6edf")
             plt.scatter(np.arange(len(threshold_values)), threshold_values, s=18, color='#31f199')
-            plt.savefig(f'{workDir}/out/{ts}_2_2_1_{"loess"}.png', dpi=300)
+            plt.savefig(f'{workDir}/out/{filename}_2_2_1_{"loess"}.png', dpi=300)
             plt.show()
             plt.close()
 

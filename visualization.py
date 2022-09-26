@@ -24,7 +24,7 @@ def generate_cmap(shift_frac):
     return new_turbo
 
 # Display Image Helper Function
-def display(image, title, ts, id, workDir, colorMap):
+def display(image, title, filename, id, workDir, colorMap):
     fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)
     plt.suptitle(title, fontsize=18)
     ax = axes.ravel()
@@ -45,24 +45,24 @@ def display(image, title, ts, id, workDir, colorMap):
     ax[2].set_title(f"{image.shape[0]-1}", fontsize=14)
 
     fig.tight_layout()
-    plt.savefig(f'{workDir}/out/{ts}_{id}_{title}.png', dpi=300)
+    plt.savefig(f'{workDir}/out/{filename}_{id}_{title}.png', dpi=300)
     plt.show()
     plt.close()
 
 # Display Single Image Helper Function
-def display_single(image, title, ts, id, workDir, colorMap):
+def display_single(image, title, filename, id, workDir, colorMap):
     fig, ax = plt.subplots()
     if(colorMap == "turbo"): cmap = plt.cm.turbo
     else: cmap = plt.cm.gray
 
     plt.title(title, fontsize=16)
     ax = plt.imshow(image, cmap=cmap)
-    plt.savefig(f'{workDir}/out/{ts}_{id}_{title}.png', dpi=300)
+    plt.savefig(f'{workDir}/out/{filename}_{id}_{title}.png', dpi=300)
     plt.show()
     plt.close()
 
 # Display Triple Image Helper Function
-def display_three(image, title, ts, id, workDir, colorMap):
+def display_three(image, title, filename, id, workDir, colorMap):
     fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, sharey=True)
     plt.suptitle(title, fontsize=18)
     ax = axes.ravel()
@@ -83,6 +83,6 @@ def display_three(image, title, ts, id, workDir, colorMap):
     ax[2].set_title(f"{len(image)-1}", fontsize=14)
 
     fig.tight_layout()
-    plt.savefig(f'{workDir}/out/{ts}_{id}_{title}.png', dpi=300)
+    plt.savefig(f'{workDir}/out/{filename}_{id}_{title}.png', dpi=300)
     plt.show()
     plt.close()
