@@ -88,38 +88,47 @@ if __name__ == "__main__":
     last_frame = c_1.shape[0] - 1
     print("[3.1] skeletonization")
     if(args.a):
-        skeleton_timelapse = skeletonize_all_frames(mask_c_1)    # skeletonizes all frames
+        skeleton_timelapse, skeleton_coordinates = skeletonize_all_frames(mask_c_1)    # skeletonizes all frames
         io.imsave(f'{ts}_skeletonized.tiff', skeleton_timelapse) # exports skeleton timelapse
-        skeleton, skeleton_object = skeleton_timelapse[last_frame], Skeleton(skeleton_timelapse[last_frame])
-        first_skeleton, first_skeleton_object = skeleton_timelapse[0], Skeleton(skeleton_timelapse[0])
+        skeleton, skeleton_object = skeleton_timelapse[last_frame], skeleton_coordinates[last_frame]
+        first_skeleton, first_skeleton_object = skeleton_timelapse[0], skeleton_coordinates[0]
     else:
         skeleton, skeleton_object = skeletonization(mask_c_1[last_frame,:,:])
         first_skeleton, first_skeleton_object = skeletonization(mask_c_1[0,:,:])
     if(args.v): display_single(skeleton, 'skeletonize', ts, '3_1', workDir, 'gray')
     plt.imsave(f'{ts}_skeleton.png', skeleton, cmap=plt.cm.gray)
 
-    print("[3.2] skeleton extrapolation")
     angle, coordinates, growing_forward = get_growth_direction(first_skeleton_object, skeleton_object)
-    if(args.f > 0):
-        if(args.f >= 1): interpolation_size = coordinates.shape[0] - 1
-        else: interpolation_size = coordinates.shape[0] * args.f
-        extrapolation = extrapolate(skeleton, int(interpolation_size), args.e, angle, coordinates)
-        extended_skeleton = Skeleton(np.logical_or(skeleton, extrapolation)) # extrapolation + skeleton
-        if(args.v): display_single(np.logical_or(skeleton, extrapolation), 'extrapolate', ts, '3_2', workDir, 'gray')
-    else:
-        extended_skeleton = skeleton_object
+    if(not args.a):
+        print("[3.2] skeleton extrapolation")
+        if(args.f > 0):
+            if(args.f >= 1): interpolation_size = coordinates.shape[0] - 1
+            else: interpolation_size = coordinates.shape[0] * args.f
+            extrapolation = extrapolate(skeleton, int(interpolation_size), args.e, angle, coordinates)
+            extended_skeleton = Skeleton(np.logical_or(skeleton, extrapolation)) # extrapolation + skeleton
+            if(args.v): display_single(np.logical_or(skeleton, extrapolation), 'extrapolate', ts, '3_2', workDir, 'gray')
+        else:
+            extended_skeleton = skeleton_object
 
     # 4 KYMOGRAPH
     print("[4] kymograph generation")
-    kymograph_c_1 = kymograph(median_c_1, extended_skeleton.coordinates, args.k, growing_forward)
-    if(hasTwoChannels): kymograph_c_0 = kymograph(median_c_0, extended_skeleton.coordinates, args.k, growing_forward)
+    shifted_turbo_cmap = generate_cmap(args.sf)
+    if(not args.a):
+        kymograph_c_1 = kymograph(median_c_1, extended_skeleton.coordinates, args.k, growing_forward)
+        if(hasTwoChannels): kymograph_c_0 = kymograph(median_c_0, extended_skeleton.coordinates, args.k, growing_forward)
+    else:
+        kymograph_c_1 = kymograph_framewise(median_c_1, skeleton_coordinates, args.k, growing_forward)
+        if(hasTwoChannels): kymograph_c_0 = kymograph_framewise(median_c_0, skeleton_coordinates, args.k, growing_forward)
 
     # output
+    if(not args.a): cmap = plt.cm.turbo
+    else: cmap = shifted_turbo_cmap
+
     if(args.v): display_single(kymograph_c_1, 'kymograph', ts, '4', workDir, 'turbo')
-    plt.imsave(f'{ts}_kymograph_c_1.png', kymograph_c_1, cmap=plt.cm.turbo)
+    plt.imsave(f'{ts}_kymograph_c_1.png', kymograph_c_1, cmap=cmap)
     np.savetxt(f"{ts}_kymograph_c_1.csv", kymograph_c_1, delimiter=",")
     if(hasTwoChannels):
-        plt.imsave(f'{ts}_kymograph_c_0.png', kymograph_c_0, cmap=plt.cm.turbo)
+        plt.imsave(f'{ts}_kymograph_c_0.png', kymograph_c_0, cmap=cmap)
         np.savetxt(f"{ts}_kymograph_c_0.csv", kymograph_c_0, delimiter=",")
 
     # 5 RATIOMETRIC IMAGE
@@ -129,7 +138,9 @@ if __name__ == "__main__":
         if(args.b): io.imsave(f'{ts}_ratiometric.tiff', ratio)
         else: io.imsave(f'{ts}_ratiometric.tiff', masked_foreground(ratio, mask_c_1))
 
-        kymograph_ratio = kymograph(masked_foreground(ratio, mask_c_1), skeleton_object.coordinates, args.k, growing_forward)
+        if(not args.a): kymograph_ratio = kymograph(masked_foreground(ratio, mask_c_1), skeleton_object.coordinates, args.k, growing_forward)
+        else: kymograph_ratio = kymograph_framewise(masked_foreground(ratio, mask_c_1), skeleton_coordinates, args.k, growing_forward)
+
         shifted_turbo_cmap = generate_cmap(args.sf)
         plt.imsave(f'{ts}_kymograph_ratio.png', kymograph_ratio, cmap=shifted_turbo_cmap)
         np.savetxt(f"{ts}_kymograph_ratio.csv", kymograph_ratio, delimiter=",")

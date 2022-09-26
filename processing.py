@@ -78,11 +78,13 @@ def masked_foreground(image, mask):
 # Skeletonization
 def skeletonize_all_frames(image):
     skeleton_timelapse = np.zeros(image.shape)
+    skeleton_coordinates = []
 
     for frame in range(image.shape[0]):
         skeleton_timelapse[frame,:,:] = skeletonize(image[frame,:,:], method='lee')
+        skeleton_coordinates.append(Skeleton(skeleton_timelapse[frame,:,:]))
 
-    return skeleton_timelapse
+    return skeleton_timelapse, skeleton_coordinates
 
 def skeletonization(image):
     skeleton = skeletonize(image, method='lee')
@@ -174,6 +176,24 @@ def kymograph(image, coordinates, kernel_size, growing_forward):
     kymograph = np.zeros((image.shape[0], coordinates.shape[0])) # shape is last skeleton size (horizontal) and number of frames (vertical)
 
     for frame in range(image.shape[0]): # for each frame
+        gaussian = ndimage.convolve(image[frame,:,:], kernel, mode='nearest', cval=0.0) # convolves image and 3x3 gaussian kernel
+        if growing_forward:
+            for idx_x, coordinate in enumerate(coordinates): # iterates skeleton
+                kymograph[frame, idx_x] = (gaussian[int(coordinate[0]), int(coordinate[1])])
+        else:
+            for idx_x, coordinate in enumerate(reversed(coordinates)): # iterates reversed skeleton
+                kymograph[frame, idx_x] = (gaussian[int(coordinate[0]), int(coordinate[1])])
+
+    return kymograph
+
+# generates framewise kymograph
+def kymograph_framewise(image, coordinates_timelapse, kernel_size, growing_forward):
+    kernel = gkern(kernel_size, 1) # default: 3x3 gaussian kernel
+
+    kymograph = np.zeros((image.shape[0], coordinates_timelapse[-1].coordinates.shape[0])) # shape is last skeleton size (horizontal) and number of frames (vertical)
+
+    for frame, coordinates in enumerate(coordinates_timelapse): # for each frame
+        coordinates = coordinates.coordinates[1:] # removes skans 0 index
         gaussian = ndimage.convolve(image[frame,:,:], kernel, mode='nearest', cval=0.0) # convolves image and 3x3 gaussian kernel
         if growing_forward:
             for idx_x, coordinate in enumerate(coordinates): # iterates skeleton
