@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # Argument Parsing
     parser = argparse.ArgumentParser(description='AMEBaS: Automatic Midline Extraction and Background Subtraction')
     parser.add_argument('filename', type=str, metavar='filename', help='dv or tiff filename')
-    parser.add_argument("--a", "--skeletonize_all_frames", default=False, action='store_true', help='traces midline in each frame of the timelapse. When False, skeletonizes only the last frame')
+    parser.add_argument("--a", "--complete_skeletonization", default=False, action='store_true', help='traces midline in each frame of the timelapse. By default, skeletonizes only the last frame')
     parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='sigma used in pre-processing steps for thresholding')
     parser.add_argument("--f", "--interpolation_fraction", type=float, nargs="?", default=.25, help='fraction of the skeleton used for interpolation')
     parser.add_argument("--sf", "--shift_fraction", type=float, nargs="?", default=.7, help='fraction of the color range that will be shifted to the background in the ratiometric kymograph colormap')
@@ -78,11 +78,13 @@ if __name__ == "__main__":
     print('[2.2] isodata thresholding')
     mask_c_1, thresh_c_1 = thresholding(gaussian_c_1, args.n, args.eb, args.v, '.', args.filename)
     if(args.v): display(mask_c_1, 'thresholding', args.filename, '2_2', workDir, 'gray')
+    np.savetxt(f"{args.filename}_background_treshold_c_1.csv", thresh_c_1, delimiter=",")
 
     # isolating largest area
     print('[2.3] isolating region with largest area')
     mask_c_1, signal_c_1 = isolate_largest_area(mask_c_1)
     if(args.v): display(mask_c_1, 'isolation', args.filename, '2_3', workDir, 'gray')
+    io.imsave(f'{args.filename}_binary_mask.tiff', mask_c_1) # exports binary mask timelapse
 
     # 3 SKELETONIZE
     last_frame = c_1.shape[0] - 1
@@ -95,8 +97,8 @@ if __name__ == "__main__":
     else:
         skeleton, skeleton_object = skeletonization(mask_c_1[last_frame,:,:])
         first_skeleton, first_skeleton_object = skeletonization(mask_c_1[0,:,:])
+        io.imsave(f'{args.filename}_skeletonized.tiff', skeleton)
     if(args.v): display_single(skeleton, 'skeletonize', args.filename, '3_1', workDir, 'gray')
-    plt.imsave(f'{args.filename}_skeleton.png', skeleton, cmap=plt.cm.gray)
 
     angle, coordinates, growing_forward = get_growth_direction(first_skeleton_object, skeleton_object)
     if(not args.a):
