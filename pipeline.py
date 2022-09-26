@@ -22,20 +22,26 @@ if __name__ == "__main__":
 
     # Argument Parsing
     parser = argparse.ArgumentParser(description='AMEBaS: Automatic Midline Extraction and Background Subtraction')
-    parser.add_argument('filename', type=str, metavar='filename', help='dv or tiff filename')
-    parser.add_argument("--a", "--complete_skeletonization", default=False, action='store_true', help='traces midline in each frame of the timelapse. By default, skeletonizes only the last frame')
-    parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='sigma used in pre-processing steps for thresholding')
-    parser.add_argument("--f", "--interpolation_fraction", type=float, nargs="?", default=.25, help='fraction of the skeleton used for interpolation')
-    parser.add_argument("--sf", "--shift_fraction", type=float, nargs="?", default=.7, help='fraction of the color range that will be shifted to the background in the ratiometric kymograph colormap')
-    parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='length of the extrapolated skeleton')
-    parser.add_argument("--n", "--n_points", type=int, nargs="?", default=40, help='number of points used in loess smoothing of the background threshold values')
-    parser.add_argument("--v", "--verbose", default=False, action='store_true', help='outputs every step in the pipeline')
-    parser.add_argument("--r", "--switch_ratio", default=False, action='store_true', help='switches channels used as numerator and denominator during ratio calculations')
-    parser.add_argument("--sm", "--smooth_ratio", default=False, action='store_true', help='smooths ratiometric output')
-    parser.add_argument("--eb", "--estimate_bg_threshold_intensity", default=True, action='store_true', help='estimates global background threshold intensity via polynomial regression of the frame-specific background threshold intensities')
-    parser.add_argument("--o", "--reject_outliers", default=False, action='store_true', help='during the ratiometric evaluation, rejects pixels with abnormal intensities and replaces with the local average.')
-    parser.add_argument("--b", "--background_ratio", default=False, action='store_true', help='export background in ratiometric output. By default, replaces background with zeros.')
-    parser.add_argument("--k", "--kymograph_kernel", type=int, nargs="?", default=3, help='size of the kernel used in the kymograph gaussian filtering')
+    # [1] Timelapse Input
+    parser.add_argument('filename', type=str, metavar='filename', help='Input timelapse filename. May be a .dv or a .tiff file.')
+    parser.add_argument("--v", "--verbose", default=False, action='store_true', help='Outputs internal steps of the pipeline.')
+    # [2] Single-Cell Segmentation
+    parser.add_argument("--s", "--sigma", type=int, nargs="?", default=2, help='Sigma used in the Gaussian Filter pre-processing step in preparation to the cell segmentation. Default is 2.')
+    # [3] Midline Tracing
+    parser.add_argument("--a", "--complete_skeletonization", default=False, action='store_true', help='Traces the midline for each frame of the timelapse. By default, skeletonizes only the last frame.')
+    parser.add_argument("--f", "--interpolation_fraction", type=float, nargs="?", default=.25, help='Fraction of the skeleton used for interpolation. Must be float contained in [0,1]. Default is 0.25.')
+    parser.add_argument("--e", "--extrapolation_length", type=int, nargs="?", default=-1, help='Length in pixels of the extrapolated skeleton. Extrapolates to the edge of the image by default.')
+    # [4] Kymograph Generation
+    parser.add_argument("--sf", "--shift_fraction", type=float, nargs="?", default=.7, help='Fraction of the color range that will be shifted to the background in non-extrapolated kymographs. Default is 0.7.')
+    parser.add_argument("--k", "--kymograph_kernel", type=int, nargs="?", default=3, help='Size of the kernel used in the kymograph Gaussian filtering. Default is 3.')
+    # [5] Ratiometric Timelapse Generation
+    parser.add_argument("--eb", "--estimate_bg_threshold_intensity", default=False, action='store_true', help='Estimates global background threshold intensity via loess polynomial regression of the frame-specific background threshold intensities. Default is false.')
+    parser.add_argument("--n", "--n_points", type=int, nargs="?", default=40, help='Number of points used in loess smoothing of the background threshold values. Used only with --eb. Default is 40.')
+    parser.add_argument("--r", "--switch_ratio", default=False, action='store_true', help='Switches channels used as numerator and denominator during ratio calculations. By default the second channel is the numerator and the first is the denominator.')
+    parser.add_argument("--sm", "--smooth_ratio", default=False, action='store_true', help='Smooths ratiometric output by applying a Median Filter pass. Default is false.')
+    parser.add_argument("--o", "--reject_outliers", default=False, action='store_true', help='During the ratiometric timelapse generation, rejects pixels with abnormal intensities and replaces with the local average. Default is false.')
+    parser.add_argument("--b", "--background_ratio", default=False, action='store_true', help='Export background in the ratiometric output. By default, replaces background with zeros.')
+    
     args = parser.parse_args()
 
     # 1 FILE READING
@@ -71,9 +77,9 @@ if __name__ == "__main__":
     # 2 DETECTING THE MAIN CELL
     print('[2] main cell segmentation')
     print('[2.1] pre-processing filters')
-    if(hasTwoChannels): median_c_0 = filters.median(c_0) # pre-processing step
-    median_c_1 = filters.median(c_1) # pre-processing step
-    gaussian_c_1 = filters.gaussian(median_c_1, sigma=args.s) # pre-processing step
+    if(hasTwoChannels): median_c_0 = filters.median(c_0)
+    median_c_1 = filters.median(c_1)
+    gaussian_c_1 = filters.gaussian(median_c_1, sigma=args.s)
     if(args.v): display(gaussian_c_1, 'filters', args.filename, '2_1', workDir, 'turbo')
     print('[2.2] isodata thresholding')
     mask_c_1, thresh_c_1 = thresholding(gaussian_c_1, args.n, args.eb, args.v, '.', args.filename)
@@ -105,8 +111,8 @@ if __name__ == "__main__":
         print("[3.2] skeleton extrapolation")
         if(args.f > 0):
             if(args.f >= 1): interpolation_size = coordinates.shape[0] - 1
-            else: interpolation_size = coordinates.shape[0] * args.f
-            extrapolation = extrapolate(skeleton, int(interpolation_size), args.e, angle, coordinates)
+            else: interpolation_size = int(coordinates.shape[0] * args.f)
+            extrapolation = extrapolate(skeleton, interpolation_size, args.e, angle, coordinates)
             extended_skeleton = Skeleton(np.logical_or(skeleton, extrapolation)) # extrapolation + skeleton
             if(args.v): display_single(np.logical_or(skeleton, extrapolation), 'extrapolate', args.filename, '3_2', workDir, 'gray')
         else:
