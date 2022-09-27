@@ -32,32 +32,32 @@ pipeline.py [-h] [--a] [--s [S]] [--f [F]] [--e [E]] [--n [N]] [--v] [--r] [--sm
 
 positional arguments:
 ```
-  filename              dv or tiff filename
+  filename              Input timelapse filename. May be a .dv or a .tiff file.
 ```
 
 optional arguments:
 ```
   -h, --help            show this help message and exit
-  --a, --skeletonize_all_frames
-                        traces midline in each frame of the timelapse. When False, skeletonizes only the last frame
-  --s [S], --sigma [S]  sigma used in pre-processing steps for thresholding
+  --v, --verbose        Outputs internal steps of the pipeline.
+  --s [S], --sigma [S]  Sigma used in the Gaussian Filter preprocessing step in preparation to the cell segmentation. Default is 2.
+  --a, --complete_skeletonization
+                        Traces the midline for each frame of the timelapse. By default, skeletonizes only the last frame.
   --f [F], --interpolation_fraction [F]
-                        fraction of the skeleton used for interpolation
+                        Fraction of the skeleton used for interpolation. Must be float contained in [0,1]. Default is 0.25.
   --e [E], --extrapolation_length [E]
-                        length of the extrapolated skeleton
-  --n [N], --n_points [N]
-                        number of points used in loess smoothing of the background threshold values
-  --v, --verbose        outputs every step in the pipeline
-  --r, --switch_ratio   switches channels used as numerator and denominator during ratio calculations
-  --sm, --smooth_ratio  smooths ratiometric output
-  --eb, --estimate_bg_threshold_intensity
-                        estimates global background threshold intensity via polynomial regression of the frame-
-                        specific background threshold intensities
-  --o, --reject_outliers
-                        during the ratiometric evaluation, rejects pixels with abnormal intensities and replaces with
-                        the local average.
-  --b, --background_ratio
-                        export background in ratiometric output. if false, replaces background with zeros.
+                        Length in pixels of the extrapolated skeleton. Extrapolates to the edge of the image by default.
+  --sf [SF], --shift_fraction [SF]
+                        Fraction of the color range that will be shifted to the background in non-extrapolated kymographs. Default is 0.7.
   --k [K], --kymograph_kernel [K]
-                        size of the kernel used in the kymograph gaussian filtering
+                        Size of the kernel used in the kymograph Gaussian filtering. Default is 3.
+  --eb, --estimate_bg_threshold_intensity
+                        Estimates global background threshold intensity via loess polynomial regression of the frame-specific background threshold intensities. Default is false.
+  --n [N], --n_points [N]
+                        Number of points used in loess smoothing of the background threshold values. Used only with --eb. Default is 40.
+  --r, --switch_ratio   Switches channels used as numerator and denominator during ratio calculations. By default the second channel is the numerator and the first is the denominator.
+  --sm, --smooth_ratio  Smooths ratiometric output by applying a Median Filter pass. Default is false.
+  --o, --reject_outliers
+                        During the ratiometric timelapse generation, rejects pixels with abnormal intensities and replaces with the local average. Default is false.
+  --b, --background_ratio
+                        Export background in the ratiometric output. By default, replaces background with zeros.
 ```
