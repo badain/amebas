@@ -150,12 +150,18 @@ def extrapolate(skeleton, interpolation_size, extension, angle, coordinates):
     if(growing_forward):
         if(extension == -1): extension = (skeleton.shape[0] - skeleton_tip) - 1 # extends to edge [skeleton_tip -> image.shape]
         for i in range(skeleton_tip+1, skeleton_tip+extension): # extends [extension] pixels from skeleton tip in `forward` direction
-            if(int(f(i)) < extrapolation.shape[1]): extrapolation[i, int(f(i))] = 1
+            if(angle <= 45 or angle >= 135):
+                if(int(f(i)) < extrapolation.shape[1]): extrapolation[int(f(i)), i] = 1
+            elif(angle > 45 and angle < 135):
+                if(int(f(i)) < extrapolation.shape[1]): extrapolation[i, int(f(i))] = 1
             else: break
     else:
         if(extension == -1): extension = skeleton_tip # extends to edge [0 -> skeleton_tip]
         for i in range(skeleton_tip-extension, skeleton_tip): # extends [extension] pixels from skeleton tip in 'backward' direction
-            if(int(f(i)) >= 0 and int(f(i)) < extrapolation.shape[1]): extrapolation[int(f(i)), i] = 1
+            if(angle <= 45 or angle >= 135):
+                if(int(f(i)) >= 0 and int(f(i)) < extrapolation.shape[1]): extrapolation[int(f(i)), i] = 1
+            elif(angle > 45 and angle < 135):
+                if(int(f(i)) >= 0 and int(f(i)) < extrapolation.shape[1]): extrapolation[i, int(f(i))] = 1
             else: break
 
     return extrapolation
