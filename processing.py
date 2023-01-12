@@ -124,17 +124,16 @@ def get_growth_direction(first_skeleton_object, last_skeleton_object):
 
 # Extrapolate Skeleton based on the direction
 def extrapolate(skeleton, interpolation_size, extension, angle, coordinates):
-    x, y = coordinates.T # transpose, then unpack  [vertical, horizontal]
+    x, y = coordinates.T # transpose, then unpack [vertical, horizontal]
 
     # extract points from the growing tip
     x_cut = x[-interpolation_size:] # vertical
     y_cut = y[-interpolation_size:] # horizontal
 
-
     # linear interpolation
     edges_x = [x_cut[0], x_cut[-1]] # vertical
     edges_y = [y_cut[0], y_cut[-1]] # horizontal
-    if(angle <= 45 or angle >= 135): f = interpolate.interp1d(edges_y, edges_x, kind='linear', fill_value='extrapolate') # generates extrapolation function for horizontal growth
+    if(angle <= 45 or angle >= 135):  f = interpolate.interp1d(edges_y, edges_x, kind='linear', fill_value='extrapolate') # generates extrapolation function for horizontal growth
     elif(angle > 45 and angle < 135): f = interpolate.interp1d(edges_x, edges_y, kind='linear', fill_value='extrapolate') # generates extrapolation function for vertical growth
 
     extrapolation = np.zeros(skeleton.shape)
