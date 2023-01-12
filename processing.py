@@ -190,8 +190,13 @@ def kymograph(image, coordinates, kernel_size, growing_forward):
 def kymograph_framewise(image, coordinates_timelapse, kernel_size, growing_forward):
     kernel = gkern(kernel_size, 1) # default: 3x3 gaussian kernel
 
-    kymograph = np.zeros((image.shape[0], coordinates_timelapse[-1].coordinates.shape[0])) # shape is last skeleton size (horizontal) and number of frames (vertical)
+    longest_skeleton = 0
+    for coordinates in coordinates_timelapse:
+        coordinates = coordinates.coordinates[1:]
+        if (len(coordinates) > longest_skeleton): longest_skeleton = len(coordinates)
 
+    kymograph = np.zeros((image.shape[0], longest_skeleton)) # shape is longest skeleton size (horizontal) and number of frames (vertical)
+    
     for frame, coordinates in enumerate(coordinates_timelapse): # for each frame
         coordinates = coordinates.coordinates[1:] # removes skans 0 index
         gaussian = ndimage.convolve(image[frame,:,:], kernel, mode='nearest', cval=0.0) # convolves image and 3x3 gaussian kernel
