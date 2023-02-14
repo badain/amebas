@@ -147,7 +147,11 @@ def extrapolate(skeleton, interpolation_size, extension, angle, coordinates):
         else: growing_forward = False
 
     if(growing_forward):
-        if(extension == -1): extension = (skeleton.shape[0] - skeleton_tip) - 1 # extends to edge [skeleton_tip -> image.shape]
+        if(extension == -1):
+            if(angle <= 45 or angle >= 135):
+                extension = (skeleton.shape[1] - skeleton_tip) - 1 # extends to edge [skeleton_tip -> image.shape]
+            elif(angle > 45 and angle < 135):
+                extension = (skeleton.shape[0] - skeleton_tip) - 1 # extends to edge [skeleton_tip -> image.shape]
         for i in range(skeleton_tip+1, skeleton_tip+extension): # extends [extension] pixels from skeleton tip in `forward` direction
             if(angle <= 45 or angle >= 135):
                 if(int(f(i)) < extrapolation.shape[1]): extrapolation[int(f(i)), i] = 1
