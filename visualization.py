@@ -50,10 +50,8 @@ def display(image, title, filename, id, workDir, colorMap):
     plt.close()
 
 # Display Single Image Helper Function
-def display_single(image, title, filename, id, workDir, colorMap):
+def display_single(image, title, filename, id, workDir, cmap):
     fig, ax = plt.subplots()
-    if(colorMap == "turbo"): cmap = plt.cm.turbo
-    else: cmap = plt.cm.gray
 
     plt.title(title, fontsize=16)
     ax = plt.imshow(image, cmap=cmap)
