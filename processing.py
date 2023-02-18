@@ -75,6 +75,13 @@ def masked_foreground(image, mask):
 
     return image
 
+# Subtract Intensity from image
+def subtract_intensity(image, intensity):
+    for frame in range(image.shape[0]): # for each frame
+        image[frame,:,:] = image[frame,:,:] - intensity[frame] # subtract intensity
+
+    return image
+
 # Skeletonization
 def skeletonize_all_frames(image):
     skeleton_timelapse = np.zeros(image.shape)
