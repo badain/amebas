@@ -14,9 +14,11 @@ Cell polarity refers to the phenomenon in which concentrated molecules in specif
 Currently, scientists use manual methods to study the way cells with polarity behave over time. This process is time-consuming and can be biased, because it has to be executed manually. Ratiometric analysis is a technique that can help correct for uneven distribution of fluorescent markers used to study cells with polarity, but background subtraction techniques are not always accurate.
 
 AMEBaS is a new computer program that has been developed to automate the study of cells with polarity and is based in pollen tube growth and ion dynamics data. This program uses a three-step process to analyze fluorescent markers in cells with polarity.
+
 1. The program separates the cell from the background.
 2. It traces a line down the center of the cell and extrapolates it.
 3. It creates a visual representation of the data over time.
+
 This program is faster, less biased, and more accurate than previous methods, making it a useful tool for studying cell polarity.
 
 ## Using AMEBaS
