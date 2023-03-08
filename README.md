@@ -15,9 +15,9 @@ Currently, scientists use manual methods to study the way cells with polarity be
 
 AMEBaS is a new computer program that has been developed to automate the study of cells with polarity and is based in pollen tube growth and ion dynamics data. This program uses a three-step process to analyze fluorescent markers in cells with polarity.
 
-1. The program separates the cell from the background.
-2. It traces a line down the center of the cell and extrapolates it.
-3. It creates a visual representation of the data over time.
+1. *Single-Cell Segmentation* The program separates the cell from the background.
+2. *Midline Tracing* It traces a line down the center of the cell and extrapolates it.
+3. *Ratiometric Timelapse* It creates a visual representation of the data over time.
 
 This program is faster, less biased, and more accurate than previous methods, making it a useful tool for studying cell polarity.
 
