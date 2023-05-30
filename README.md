@@ -80,6 +80,10 @@ Rafael Badain<sup>1</sup>, Daniel S. C. Damineli<sup>1,2</sup>, Maria Teresa Por
 
 ## Dependencies
 This code was tested using the following distributions at time of publication:
+mrc==0.3.0<br/>
 skan==0.11.0<br/>
-numba==0.57.0<br/>
-numpy==1.21.6<br/>
+scikit-image==0.19.3<br/>
+loess==2.1.2<br/>
+matplotlib==3.7.1<br/>
+numba==0.56.4<br/>
+numpy==1.22.4<br/>
