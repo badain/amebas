@@ -67,3 +67,13 @@ optional arguments:
   --b, --background_ratio
                         Export background in the ratiometric output. By default, replaces background with zeros.
 ```
+
+## Authors and Affiliations:
+Rafael Badain<sup>1</sup>, Daniel S. C. Damineli<sup>1,2</sup>, Maria Teresa Portes<sup>3</sup>, José Feijó<sup>4</sup>, Stefano Buratti<sup>5</sup>, Giorgia Tortora<sup>6</sup>, Hugo Neves de Oliveira<sup>1</sup>, Roberto M. Cesar Jr<sup>1</sup>
+
+<sup>1</sup>Institute of Mathematics and Statistics, University of São Paulo, Brazil<br/>
+<sup>2</sup>Center for Mathematics, Computing and Cognition at the Federal University of the ABC, São Paulo, Brazil<br/>
+<sup>3</sup>Department of Botany, Institute of Biosciences, University of São Paulo, Brazil<br/>
+<sup>4</sup>Cell Biology and Molecular Genetics Department, University of Maryland, College Park, USA<br/>
+<sup>5</sup>Department of Biosciences, University of Milan, 20133 Milano, Italy<br/>
+<sup>6</sup>Department of Physics, Politecnico di Milano, 20133 Milano, Italy
