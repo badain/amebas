@@ -77,3 +77,9 @@ Rafael Badain<sup>1</sup>, Daniel S. C. Damineli<sup>1,2</sup>, Maria Teresa Por
 <sup>4</sup>Cell Biology and Molecular Genetics Department, University of Maryland, College Park, USA<br/>
 <sup>5</sup>Department of Biosciences, University of Milan, 20133 Milano, Italy<br/>
 <sup>6</sup>Department of Physics, Politecnico di Milano, 20133 Milano, Italy
+
+## Dependencies
+This code was tested using the following distributions at time of publication:
+skan==0.11.0<br/>
+numba==0.57.0<br/>
+numpy==1.21.6<br/>
