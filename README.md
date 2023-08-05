@@ -67,9 +67,10 @@ optional arguments:
   --b, --background_ratio
                         Export background in the ratiometric output. By default, replaces background with zeros.
 ```
+## Cite as
+Badain, R., Damineli, D. S. C., Portes, M. T., Feijó, J., Buratti, S., Tortora, G., Neves de Oliveira, H., Cesar Jr, R. M. AMEBaS: Automatic Midline Extraction and Background Subtraction of Ratiometric Fluorescence Time-Lapses of Polarized Single Cells. J. Vis. Exp. (196), e64857, doi:10.3791/64857 (2023).
 
 ## Authors and Affiliations:
-Badain, R., Damineli, D. S. C., Portes, M. T., Feijó, J., Buratti, S., Tortora, G., Neves de Oliveira, H., Cesar Jr, R. M. AMEBaS: Automatic Midline Extraction and Background Subtraction of Ratiometric Fluorescence Time-Lapses of Polarized Single Cells. J. Vis. Exp. (196), e64857, doi:10.3791/64857 (2023).
 
 Rafael Badain<sup>1</sup>, Daniel S. C. Damineli<sup>1,2</sup>, Maria Teresa Portes<sup>3</sup>, José Feijó<sup>4</sup>, Stefano Buratti<sup>5</sup>, Giorgia Tortora<sup>6</sup>, Hugo Neves de Oliveira<sup>1</sup>, Roberto M. Cesar Jr<sup>1</sup>
 
