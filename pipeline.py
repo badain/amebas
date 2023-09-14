@@ -149,6 +149,5 @@ if __name__ == "__main__":
         if(not args.a): kymograph_ratio = kymograph(masked_foreground(ratio, mask_c_1), skeleton_object.coordinates, args.k, growing_forward)
         else: kymograph_ratio = kymograph_framewise(masked_foreground(ratio, mask_c_1), skeleton_coordinates, args.k, growing_forward)
 
-        shifted_turbo_cmap = generate_cmap(args.sf)
         plt.imsave(f'{args.filename}_kymograph_ratio.png', kymograph_ratio, cmap=shifted_turbo_cmap)
         np.savetxt(f"{args.filename}_kymograph_ratio.csv", kymograph_ratio, delimiter=",")
